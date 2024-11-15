@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NoteWaves.com</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #000000, #000000);
+            color: #e0e0e0;
+            margin: 0;
+            padding: 0;
+            perspective: 1000px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 50px auto;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 200px 40px rgba(87, 0, 122, 0.553), inset 0 1px 10px 1px white;
+            text-align: center;
+            transform-style: preserve-3d;
+            animation: rotateIn 1s ease-in-out forwards;
+        }
+
+        @keyframes rotateIn {
+            from {
+                transform: rotateY(-90deg);
+                opacity: 0;
+            }
+
+            to {
+                transform: rotateY(0);
+                opacity: 1;
+            }
+        }
+
+        h1 {
+            color: #ff4081;
+            /* Bright color for emphasis */
+            animation: fadeInUp 1.6s ease-in-out forwards;
+            text-shadow: 2px 6px 4px rgba(255, 255, 255, 0.3);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        #logo {
+            margin-right: 20px;
+            padding: 15px;
+            padding-bottom: 15px;
+            height: 10px;
+        }
+
+        h2 {
+            color: #ffffff;
+            /* Bright white for contrast */
+        }
+
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        li {
+            padding: 8px;
+            margin-bottom: 15px;
+
+        }
+
+        a {
+            display: inline-block;
+            padding: 15px 25px;
+            background-color: #1500f9;
+            /* Vibrant purple */
+            color: white;
+            text-decoration: none;
+
+            border-radius: 10px;
+            transition: all .4s ease;
+            position: relative;
+        }
+
+        a::after {
+            content: '';
+            position: absolute;
+            left: -5%;
+            right: -5%;
+            top: -5%;
+            bottom: -5%;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: inherit;
+            z-index: -1;
+            transition: all .4s ease;
+        }
+
+        a:hover::after {
+            transform: scale(1.15);
+            /* Slightly enlarge background on hover */
+        }
+
+        a:hover {
+            color: black;
+            background-color: #00ff00;
+            /* Darker purple on hover */
+            transform: translateY(-5px) scale(1.05);
+        }
+
+        .user-greeting {
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+
+        .feedback-section {
+            margin-top: 30px;
+            animation: slideIn .5s ease-in-out forwards;
+            /* Slide in effect */
+            opacity: 0;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY (20 px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY (0);
+                opacity: 1;
+            }
+        }
+
+        .feedback-section textarea {
+            width: calc(100% - 20px);
+            height: 100px;
+            margin-bottom: 10px;
+            background-color: #000000;
+            color: #ffffff;
+            border-radius: 5 px;
+            border: none;
+            box-shadow: inset 0 -2 px5 px rgba (255, 255, 255, 0.1);
+            transition: background-color .3s ease;
+            font-size: 15px;
+        }
+
+        .feedback-section textarea:hover {
+            background-color: #221515;
+            /* Darker on hover */
+        }
+
+        button.submit-feedback {
+            background-color: #d32f2f;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color .3s ease, transform .2s ease;
+        }
+
+        button.submit-feedback:hover {
+            background-color: #7e010199;
+            transform: translateY(-2px) scale(1.05);
+            /* Lift and enlarge effect on hover */
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        footer {
+            margin-top: 30 px;
+            font-size: 14 px;
+            color: #ccc;
+        }
+
+        /* New styles for animations */
+        .floating-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate (-50%, -50%);
+            animation: floatUpDown .8s ease-in-out infinite alternate;
+            /* Floating effect */
+        }
+
+        @keyframes floatUpDown {
+            from {
+                transform: translate (-50%, -50%) translateY (10 px);
+            }
+
+            to {
+                transform: translate (-50%, -50%) translateY (-10 px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Welcome to NoteWaves.AI</h1>
+
+        {% if session['user_id'] %}
+        <p class="user-greeting">Hello, {{ session['username'] }}! You are logged in.</p>
+        <a href="{{ url_for('logout') }}">Logout</a>
+        {% else %}
+        <a id="logo" href="{{ url_for('register') }}">Register</a>
+        <a id="logo" href="{{ url_for('login') }}">Login</a>
+        {% endif %}
+
+        <h2>Available Tools:</h2>
+        <ul>
+            <li><a href="{{ url_for('generate_notes') }}">Generate Notes</a></li>
+            <li><a href="{{ url_for('youtube_transcript_summarizer') }}">Extract Notes from Video</a></li>
+            <li><a href="{{ url_for('video_downloader') }}">Download Video</a></li>
+            <li><a href="{{ url_for('mp3_downloader') }}">Convert video to MP3</a></li>
+        </ul>
+
+        <div class="feedback-section">
+            <h2>Feedback</h2>
+            <form method="POST" action="{{ url_for('feedback') }}">
+                <textarea name="comment" placeholder="Share your feedback or report an issue..."></textarea><br><br>
+                <button type="submit" class="submit-feedback">Submit Feedback</button>
+            </form>
+            {% if error %}
+            <p style="color:red;">{{ error }}</p> <!-- Display error messages -->
+            {% endif %}
+            {% if success %}
+            <p style="color:green;">{{ success }}</p> <!-- Display success messages -->
+            {% endif %}
+        </div>
+
+        <!-- Floating Icon Example -->
+        <div class="floating-icon">
+            <!-- You can replace this with an image or SVG icon -->
+        </div>
+
+        <!-- <form method="POST" action="{{ url_for('delete_all_data') }}">
+            <button type="submit" onclick="return confirm('Are you sure you want to delete all data? This action cannot be undone.');">Delete All Data</button>
+        </form> -->
+        <br><br>
+        <footer>&copy; {{ current_year }} NoteWaves.com | All Rights Reserved.</footer>
+
+
+
+    </div>
+
+    <!-- JavaScript for feedback section animation -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const feedbackSection = document.querySelector('.feedback-section');
+            feedbackSection.style.opacity = '1'; // Make it visible
+        });
+    </script>
+
+</body>
+
+</html>

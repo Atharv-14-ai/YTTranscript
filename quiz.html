@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Interactive Quiz</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f0f4f8;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            max-width: 600px;
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #002042;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .question {
+            display: none;
+            /* Hide all questions initially */
+            margin-bottom: 20px;
+            padding: 20px;
+            /* Increased padding for questions */
+            border-radius: 5px;
+            background-color: #e7f3fe;
+            /* Light blue for questions */
+            border-left: 5px solid #002042;
+            /* Left border for emphasis */
+        }
+
+        .question.active {
+            display: block;
+            /* Show the active question */
+        }
+
+        .question p {
+            font-weight: bold;
+            font-size: 18px;
+            /* Larger font size for questions */
+            color: #333;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 15px;
+            /* Increased margin for options */
+            cursor: pointer;
+            padding: 10px;
+            /* Padding for options */
+            border-radius: 5px;
+            /* Rounded corners */
+            background-color: #f9f9f9;
+            /* Light gray for options */
+            transition: background-color 0.3s ease;
+            /* Smooth transition */
+        }
+
+        label:hover {
+            background-color: #d1e7dd;
+            /* Change color on hover */
+        }
+
+        input[type="radio"] {
+            margin-right: 10px;
+        }
+
+        button {
+            background-color: #002042;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            /* Added transform for button */
+        }
+
+        button:hover {
+            background-color: #0056b3;
+            /* Darker blue on hover */
+            transform: scale(1.05);
+            /* Slightly increase size on hover */
+        }
+
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            background-color: #e7f3fe;
+            /* Light blue background for feedback */
+            color: #31708f;
+            /* Darker blue for text */
+        }
+
+        .progress {
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Dynamic Interactive Quiz</h1>
+
+        <div class="progress" id="progress"></div>
+
+        <form id="quizForm">
+            {% for question in questions %}
+            <div class="question" id="question-{{ loop.index }}">
+                <p>{{ question.question }}</p>
+                {% for option in question.options %}
+                <label>
+                    <input type="radio" name="answers-{{ loop.index }}" value="{{ option }}">
+                    {{ option }}
+                </label>
+                {% endfor %}
+            </div>
+            {% endfor %}
+
+            <button type="button" id="prevBtn" style="display:none;">Previous</button>
+            <button type="button" id="nextBtn">Next</button>
+            <button type="submit" id="submitBtn" style="display:none;">Submit Answers</button>
+        </form>
+
+        {% if feedback %}
+        <div class="feedback">
+            <h2>Feedback:</h2>
+            <p>{{ feedback }}</p> <!-- Display feedback after submission -->
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        const questions = document.querySelectorAll('.question');
+        const progress = document.getElementById('progress');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const submitBtn = document.getElementById('submitBtn');
+    
+        let currentQuestionIndex = 0;
+        let score = 0; // Initialize score
+    
+        function showQuestion(index) {
+            questions.forEach((q, i) => {
+                q.classList.remove('active');
+                if (i === index) {
+                    q.classList.add('active');
+                }
+            });
+            updateProgress();
+            updateButtons();
+        }
+    
+        function updateProgress() {
+            progress.textContent = `Question ${currentQuestionIndex + 1} of ${questions.length}`;
+        }
+    
+        function updateButtons() {
+            prevBtn.style.display = currentQuestionIndex === 0 ? 'none' : 'inline-block';
+            nextBtn.style.display = currentQuestionIndex === questions.length - 1 ? 'none' : 'inline-block';
+            submitBtn.style.display = currentQuestionIndex === questions.length - 1 ? 'inline-block' : 'none';
+        }
+    
+        // Function to check answers
+        function checkAnswers() {
+            const totalQuestions = questions.length; // Total number of questions
+            score = 0; // Reset score
+    
+            // Check each question
+            questions.forEach((question, index) => {
+                const selectedOption = document.querySelector(`input[name="answers-${index + 1}"]:checked`);
+                if (selectedOption && selectedOption.value === question.dataset.answer) { // Use data attribute for correct answer
+                    score++; // Increment score for correct answer
+                }
+            });
+    
+            // Redirect to results page with score as a parameter
+            window.location.href = `result.html?score=${score}&total=${totalQuestions}`;
+        }
+    
+        prevBtn.addEventListener('click', () => {
+            if (currentQuestionIndex > 0) currentQuestionIndex--;
+            showQuestion(currentQuestionIndex);
+        });
+    
+        nextBtn.addEventListener('click', () => {
+            if (currentQuestionIndex < questions.length - 1) currentQuestionIndex++;
+            showQuestion(currentQuestionIndex);
+        });
+    
+        document.getElementById('quizForm').addEventListener('submit', (e) => {
+            e.preventDefault(); // Prevent default form submission
+            checkAnswers(); // Call function to check answers and redirect
+        });
+    
+        // Initialize the quiz by showing the first question
+        showQuestion(currentQuestionIndex);
+    </script>
+</body>
+
+</html>

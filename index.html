@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Transcript Summarizer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #000000, #000000);
+            font-family: 'Roboto', sans-serif;
+            color: #e0e0e0;
+            /* Light gray text for contrast */
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            color: #ffffff;
+            /* Light purple */
+            font-size: 2.5em;
+            /* Larger font size */
+            text-align: center;
+            margin-top: 40px;
+            animation: fadeIn 1.2s ease-in-out;
+            /* Fade-in animation */
+            text-shadow: 6px 13px 10px rgb(120, 0, 160);
+
+        }
+
+        .container {
+            max-width: 560px;
+            border-radius: 12px;
+            margin: 40px auto;
+            /* Center the container */
+            padding: 30px;
+
+            background: rgba(0, 0, 0, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 20px 200px 40px rgba(87, 0, 122, 0.553), inset 0 1px 10px 1px white;
+            text-align: center;
+            transform-style: preserve-3d;
+            animation: rotateIn 1s ease-in-out forwards;
+        }
+
+        @keyframes rotateIn {
+            from {
+                transform: rotateY(-90deg);
+                opacity: 0;
+            }
+
+            to {
+                transform: rotateY(0);
+                opacity: 1;
+            }
+        }
+
+        label {
+            font-size: 20px;
+            font-weight: bold;
+            display: block;
+            /* Block display for labels */
+            margin-bottom: 10px;
+            /* Space below label */
+        }
+
+        input[type="text"],
+        select {
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+            height: 48px;
+            border-radius: 6px;
+            width: calc(100% - 20px);
+            /* Full width minus padding */
+            padding: 0 10px;
+            border: 1px solid #e2e2e2;
+            outline: none;
+            margin-bottom: 20px;
+            /* Space below input */
+            background-color: #424242;
+            /* Darker area for input */
+            color: #e0e0e0;
+            /* Light gray text for contrast */
+        }
+
+        button {
+            color: #ffffff;
+            background-color: #1500f9;
+            /* Dark purple button */
+            font-weight: normal;
+            margin-left: 12px;
+            width: 40%;
+            /* Full width */
+            border: none;
+            border-radius: 6px;
+            padding: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+            /* Smooth transition */
+        }
+
+        button:hover {
+            transform: translateY(-5px);
+            /* Lift effect */
+            color: black;
+            background-color: #00ff00;
+        }
+
+        .summary-container,
+        .feedback-container {
+            color: black;
+            margin-top: 20px;
+            /* Space above sections */
+            padding: 15px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            /* Light background for contrast */
+        }
+
+        .message {
+            text-align: center;
+            margin-top: 10px;
+            color: green;
+            /* Success message color */
+        }
+
+        .error {
+            text-align: center;
+            color: red;
+            /* Error message color */
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Extract Notes From Video</h1>
+
+        <form method="POST" enctype="multipart/form-data">
+            <label for="youtube_link">YouTube Link:</label>
+            <input type="text" id="youtube_link" name="youtube_link" value="{{ youtube_link }}" required> <!-- Retain input value -->
+
+            <label for="summary_length">Summary Length:</label>
+            <select id="summary_length" name="summary_length">
+                <option value="Short (100 words)">Short (100 words)</option>
+                <option value="Medium (300 words)">Medium (300 words)</option>
+                <option value="Long (500 words)">Long (500 words)</option>
+            </select>
+
+            <button type="submit">Generate Summary</button>
+        </form>
+
+        {% if summary %}
+          <h2>Generated Summary:</h2>
+          <div class="generated-notes">{{ summary|safe }}</div> <!-- Display generated notes -->
+          
+          {% if pdf_file %}
+              <a href="{{ url_for('download_file', filename=pdf_file.split('/')[-1]) }}">
+                  <button style="margin-top: 20px;">Download Generated Notes</button>
+              </a>
+          {% endif %}
+        
+          <a href="{{ url_for('quiz', summary=summary) }}">
+              <button style="margin-top: 20px;">Take Quiz</button>
+          </a>
+          
+        {% endif %}
+
+        {% if error_message %}
+          <p class="error">{{ error_message }}</p> <!-- Display error messages -->
+        {% endif %}
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Convert Video to MP3</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #000000, #000000); /* Dark gradient background */
+            font-family: 'Roboto', sans-serif;
+            color: #e0e0e0; /* Light gray text for contrast */
+            margin: 0;
+            padding: 0;
+            perspective: 1000px;
+        }
+
+        h1 {
+            color: #ffffff; /* Light purple */
+            text-align: center;
+            margin-top: 40px;
+            animation: fadeIn 1.6s ease-in-out; /* Fade-in animation */
+            text-shadow: 6px 13px 10px rgb(120, 0, 160);
+
+        }
+
+        .container {
+            background: rgba(0, 0, 0, 0.9);
+            max-width: 560px;
+            border-radius: 20px; /* Rounded corners */
+            box-shadow: 0px 20px 200px 40px rgba(87, 0, 122, 0.553), inset 0 1px 10px 1px white; /* Purple glow effect */
+            margin: 40px auto; /* Center the container */
+            padding: 20px;
+            transform-style: preserve-3d; 
+            animation: rotateIn 1s ease-in-out forwards; /* Rotate in effect */
+        }
+
+        @keyframes rotateIn {
+            from {
+                transform: rotateY(-90deg);
+                opacity: 0;
+            }
+            to {
+                transform: rotateY(0);
+                opacity: 1;
+            }
+        }
+
+        label {
+            font-size: 20px;
+            font-weight: bold;
+            display: block; /* Block display for labels */
+            margin-bottom: 10px; /* Space below label */
+        }
+
+        input[type="text"] {
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+            height: 48px;
+            border-radius: 6px;
+            width: calc(100% - 20px); /* Full width minus padding */
+            padding: 0 10px;
+            border: 1px solid #e2e2e2;
+            outline: none;
+            margin-bottom: 20px; /* Space below input */
+            background-color: #424242; /* Darker area for input */
+            color: #e0e0e0; /* Light gray text for contrast */
+        }
+
+        select {
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+            height: 48px;
+            border-radius: 6px;
+            width: calc(100% - 20px); /* Full width minus padding */
+            padding: 0 10px;
+            border: 1px solid #e2e2e2;
+            outline: none;
+            margin-bottom: 20px; /* Space below select */
+            background-color: #424242; /* Darker area for select */
+            color: #e0e0e0; /* Light gray text for contrast */
+        }
+
+        button {
+            color: #ffffff;
+            background-color: #1500f9; /* Dark purple button */
+            font-weight: normal;
+            width: 100%; /* Full width */
+            border: none;
+            border-radius: 6px;
+            padding: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s; /* Smooth transition */
+        }
+
+        button:hover {
+            color: black;
+            background-color: #00ff00; /* Lighter purple on hover */
+            transform: translateY(-2px); /* Lift effect */
+        }
+
+        .message {
+          text-align:center;
+          margin-top:10px;color:white;/* Success message color */
+        }
+
+        .error {
+          text-align:center;color:red;/* Error message color */
+        }
+
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+
+/* 
+        .particle {
+           position: absolute;
+           width: 8px; 
+           height: 8px; 
+           background-color: #0400fc;
+           border-radius: 50%;
+           pointer-events: none; 
+           opacity: 1;
+           transition: transform .5s ease, opacity .5s ease; 
+       } */
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Convert Video to MP3</h1>
+
+        <form method="POST">
+            <label for="video_link">YouTube Video Link:</label>
+            <input type="text" id="video_link" name="video_link" placeholder="Enter YouTube Video Link" required>
+
+            <label for="audio_quality">Select Audio Quality:</label>
+            <select id="audio_quality" name="audio_quality">
+                <option value="best">Best Quality</option>
+                <option value="worst">Worst Quality</option>
+                <option value="128k">128 kbps</option>
+                <option value="192k">192 kbps</option>
+                <option value="256k">256 kbps</option>
+                <option value="320k">320 kbps</option>
+             </select>
+
+             <button type="submit">Convert to MP3</button>
+         </form>
+
+         {% if download_message %}
+         <p class="message">{{ download_message }}</p> <!-- Display success messages -->
+         {% endif %}
+         
+         {% if error_message %}
+         <p class="error">{{ error_message }}</p> <!-- Display error messages -->
+         {% endif %}
+     </div>
+
+     <script>
+        document.addEventListener('mousemove', function(e) {
+            createParticle(e.clientX, e.clientY);
+        });
+  
+        function createParticle(x, y) {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            
+            // Adjust position to place particle at cursor tip
+            particle.style.left = `${x - (4)}px`; // Offset by half of particle width
+            particle.style.top = `${y - (4)}px`; // Offset by half of particle height
+  
+            document.body.appendChild(particle);
+  
+            // Animate the particle
+            requestAnimationFrame(() => {
+                particle.style.transform = 'translateY(-30px) scale(0)';
+                particle.style.opacity = '0';
+            });
+  
+            // Remove the particle after animation
+            setTimeout(() => {
+                particle.remove();
+            }, 500); // Match with CSS transition duration
+        }
+      </script>
+</body>
+
+</html>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Progress</title>
+</head>
+<body>
+    <h1>User Progress</h1>
+    
+    {% if progress %}
+      <p>Summaries Generated: {{ progress.summaries_generated }}</p>
+      <p>Total Quizzes Taken: {{ progress.total_quizzes_taken }}</p>
+      <p>Total Quiz Score: {{ progress.total_quiz_score }}</p>
+      <p>Average Quiz Score: {{ (progress.total_quiz_score / (progress.total_quizzes_taken or 1)) | round(2) }}</p>
+    {% else %}
+      <p>No progress data available.</p>
+    {% endif %}
+    
+</body>
+</html>
